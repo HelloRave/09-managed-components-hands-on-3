@@ -1,4 +1,6 @@
 import React from "react";
+import AddUser from "./components/AddUser";
+import User from "./components/User";
 import "./styles.css";
 
 export default class App extends React.Component {
@@ -27,28 +29,6 @@ export default class App extends React.Component {
     editedUserEmail: ""
   };
 
-  renderAddUser() {
-    return (
-      <React.Fragment>
-        <input
-          type="text"
-          placeholder="User name"
-          value={this.state.newUserName}
-          onChange={this.updateFormField}
-          name="newUserName"
-        />
-        <input
-          type="text"
-          placeholder="User email"
-          value={this.state.newUserEmail}
-          onChange={this.updateFormField}
-          name="newUserEmail"
-        />
-        <button onClick={this.addUser}>Add</button>
-      </React.Fragment>
-    );
-  }
-
   updateFormField = (event) => {
     this.setState({
       [event.target.name]: event.target.value
@@ -60,66 +40,21 @@ export default class App extends React.Component {
       <div className="App">
         {this.state.users.map((user) => {
           return (
-            <React.Fragment>
-              <div class="box">
-                {user._id === this.state.userBeingEdited ? (
-                  <div>
-                    <input
-                      type="text"
-                      name="editedUserName"
-                      onChange={this.updateFormField}
-                      value={this.state.editedUserName}
-                    />
-                  </div>
-                ) : (
-                  <h3>{user.name}</h3>
-                )}
-                {user._id === this.state.userBeingEdited ? (
-                  <div>
-                    <input
-                      type="text"
-                      name="editedUserEmail"
-                      onChange={this.updateFormField}
-                      value={this.state.editedUserEmail}
-                    />
-                  </div>
-                ) : (
-                  <h4>{user.email}</h4>
-                )}
-                {user._id === this.state.userBeingEdited ? (
-                  <div>
-                    <button
-                      onClick={() => {
-                        this.confirmEdit(user);
-                      }}
-                    >
-                      Confirm
-                    </button>
-                    <button onClick={this.cancelEdit}>Cancel edit</button>
-                  </div>
-                ) : (
-                  <div>
-                    <button
-                      onClick={() => {
-                        this.beginEdit(user);
-                      }}
-                    >
-                      Update
-                    </button>
-                    <button
-                      onClick={() => {
-                        this.deleteUser(user);
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-            </React.Fragment>
+            <User user={user}
+                  userBeingEdited={this.state.userBeingEdited}
+                  updateFormField={this.updateFormField}
+                  editedUserName={this.state.editedUserName}
+                  editedUserEmail={this.state.editedUserEmail}
+                  confirmEdit={this.confirmEdit}
+                  cancelEdit={this.cancelEdit}
+                  beginEdit={this.beginEdit}
+                  deleteUser={this.deleteUser}/>
           );
         })}
-        {this.renderAddUser()}
+        <AddUser newUserName={this.state.newUserName}
+                 newUserEmail={this.state.newUserEmail}
+                 updateFormField={this.updateFormField}
+                 addUser={this.addUser}/>
       </div>
     );
   }
@@ -178,7 +113,7 @@ export default class App extends React.Component {
 
     let index = this.state.users.findIndex((u) => u._id === user._id);
     this.setState({
-      users: [...this.state.slice(0, index), ...this.state.slice(index + 1)]
+      users: [...this.state.users.slice(0, index), ...this.state.users.slice(index + 1)]
     });
   };
 
